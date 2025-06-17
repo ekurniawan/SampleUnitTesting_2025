@@ -1,7 +1,7 @@
 ﻿using EmployeeManagement.Business.EventArguments;
 using EmployeeManagement.Business.Exceptions;
 using EmployeeManagement.DataAccess.Entities;
-using EmployeeManagement.DataAccess.Services; 
+using EmployeeManagement.DataAccess.Services;
 
 namespace EmployeeManagement.Business
 {
@@ -156,7 +156,7 @@ namespace EmployeeManagement.Business
             var employee = (InternalEmployee)_employeeFactory.CreateEmployee(firstName, lastName);
 
             // apply business logic 
-       
+
             // add obligatory courses attended by all new employees
             // during vetting process
 
