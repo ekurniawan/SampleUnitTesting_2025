@@ -56,6 +56,7 @@ namespace EmployeeManagement.Business
             await _repository.SaveChangesAsync();
         }
 
+
         public async Task GiveRaiseAsync(InternalEmployee employee, int raise)
         {
             // raise must be at least 100
