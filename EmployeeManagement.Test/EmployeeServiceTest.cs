@@ -2,6 +2,7 @@
 using EmployeeManagement.Business.EventArguments;
 using EmployeeManagement.Business.Exceptions;
 using EmployeeManagement.DataAccess.Entities;
+using EmployeeManagement.Test.Fixtures;
 using EmployeeManagement.Test.Services;
 using System;
 using System.Collections.Generic;
@@ -13,18 +14,23 @@ namespace EmployeeManagement.Test
 {
     public class EmployeeServiceTest
     {
+        private readonly EmployeeServiceFixture _employeeServiceFixture;
+
+        public EmployeeServiceTest()
+        {
+            _employeeServiceFixture = new EmployeeServiceFixture();
+        }
+
         [Fact]
         public void CreateInternalEmployee_InternalEmployeeCreated_MustHaveAttendedFirstObligatoryCourse_WithObject()
         {
             //arrange
-            var employeManagementTestDataRepository = new EmployeeManagementTestDataRepository();
-            var employeeService = new EmployeeService(employeManagementTestDataRepository,
-                new EmployeeFactory());
-            var obligatoryCourse = employeManagementTestDataRepository.
+
+            var obligatoryCourse = _employeeServiceFixture.EmployeManagementTestDataRepository.
                 GetCourse(Guid.Parse("37e03ca7-c730-4351-834c-b66f280cdb01"));
 
             //act
-            var internalEmployee = employeeService
+            var internalEmployee = _employeeServiceFixture.EmployeeService
                 .CreateInternalEmployee("Scott", "Guthrie");
 
             //assert
@@ -34,11 +40,9 @@ namespace EmployeeManagement.Test
         [Fact]
         public void CreateInternalEmployee_InternalEmployeeCreated_MustHaveAttendedFirstObligatoryCourse_WithPredicate()
         {
-            var employeManagementTestDataRepository = new EmployeeManagementTestDataRepository();
-            var employeeService = new EmployeeService(employeManagementTestDataRepository,
-                new EmployeeFactory());
 
-            var internalEmployee = employeeService
+
+            var internalEmployee = _employeeServiceFixture.EmployeeService
                 .CreateInternalEmployee("Scott", "Guthrie");
 
             //assert
@@ -49,15 +53,13 @@ namespace EmployeeManagement.Test
         [Fact]
         public void CreateInternalEmployee_InternalEmployeeCreated_AttendedCourseMustMatchObligatoryCourses()
         {
-            var employeManagementTestDataRepository = new EmployeeManagementTestDataRepository();
-            var employeeService = new EmployeeService(employeManagementTestDataRepository,
-                new EmployeeFactory());
-            var obligatoryCourses = employeManagementTestDataRepository.
+
+            var obligatoryCourses = _employeeServiceFixture.EmployeManagementTestDataRepository.
                 GetCourses(
                     Guid.Parse("37e03ca7-c730-4351-834c-b66f280cdb01"),
                     Guid.Parse("1fd115cf-f44c-4982-86bc-a8fe2e4ff83e"));
 
-            var internalEmployee = employeeService.CreateInternalEmployee("Scott", "Guthrie");
+            var internalEmployee = _employeeServiceFixture.EmployeeService.CreateInternalEmployee("Scott", "Guthrie");
 
             //assert
             Assert.Equal(obligatoryCourses, internalEmployee.AttendedCourses);
@@ -67,15 +69,13 @@ namespace EmployeeManagement.Test
         public async Task CreateInternalEmployee_InternalEmployeeCreated_AttendedCourseMustMatchObligatoryCourses_Async()
         {
             //arrange
-            var employeManagementTestDataRepository = new EmployeeManagementTestDataRepository();
-            var employeeService = new EmployeeService(employeManagementTestDataRepository,
-                new EmployeeFactory());
-            var obligatoryCourses = await employeManagementTestDataRepository.
+
+            var obligatoryCourses = await _employeeServiceFixture.EmployeManagementTestDataRepository.
                 GetCoursesAsync(
                     Guid.Parse("37e03ca7-c730-4351-834c-b66f280cdb01"),
                     Guid.Parse("1fd115cf-f44c-4982-86bc-a8fe2e4ff83e"));
 
-            var internalEmployee = await employeeService.CreateInternalEmployeeAsync("Scott", "Guthrie");
+            var internalEmployee = await _employeeServiceFixture.EmployeeService.CreateInternalEmployeeAsync("Scott", "Guthrie");
 
 
             //assert
@@ -86,28 +86,23 @@ namespace EmployeeManagement.Test
         public async Task GiveRaise_RaiseBelowMinimumGiven_EmployeeInvalidRaiseExceptionMustBeThrown()
         {
             //arrange
-            var employeManagementTestDataRepository = new EmployeeManagementTestDataRepository();
-            var employeeService = new EmployeeService(employeManagementTestDataRepository,
-                new EmployeeFactory());
             var internalEmployee = new InternalEmployee("Scott", "Guthrie", 2, 3000, false, 2);
 
             await Assert.ThrowsAsync<EmployeeInvalidRaiseException>(
-                async () => await employeeService.GiveRaiseAsync(internalEmployee, 50));
+                async () => await _employeeServiceFixture.EmployeeService.GiveRaiseAsync(internalEmployee, 50));
         }
 
         [Fact]
         public void NotifyOfAbsence_EmployeeIsAbsent_OnEmployeeIsAbsentEventMustBeRaised()
         {
             //arrange
-            var employeManagementTestDataRepository = new EmployeeManagementTestDataRepository();
-            var employeeService = new EmployeeService(employeManagementTestDataRepository,
-                new EmployeeFactory());
+
             var internalEmployee = new InternalEmployee("Scott", "Guthrie", 2, 3000, false, 2);
 
             Assert.Raises<EmployeeIsAbsentEventArgs>(
-                handler => employeeService.EmployeeIsAbsent += handler,
-                handler => employeeService.EmployeeIsAbsent -= handler,
-                () => employeeService.NotifyOfAbsence(internalEmployee));
+                handler => _employeeServiceFixture.EmployeeService.EmployeeIsAbsent += handler,
+                handler => _employeeServiceFixture.EmployeeService.EmployeeIsAbsent -= handler,
+                () => _employeeServiceFixture.EmployeeService.NotifyOfAbsence(internalEmployee));
         }
     }
 }

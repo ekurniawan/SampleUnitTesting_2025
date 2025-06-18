@@ -10,14 +10,20 @@ namespace EmployeeManagement.Test
 {
     public class EmployeeFactoryTest
     {
+        private readonly EmployeeFactory _employeeFactory;
+        public EmployeeFactoryTest()
+        {
+            _employeeFactory = new EmployeeFactory();
+        }
+
         [Fact]
         public void CreateEmployee_ConstructInternalEmployee_SalaryMustBe2500()
         {
             //arrange
-            var employeeFactory = new EmployeeFactory();
+
 
             //act
-            var employee = (InternalEmployee)employeeFactory.CreateEmployee("John", "Doe");
+            var employee = (InternalEmployee)_employeeFactory.CreateEmployee("John", "Doe");
 
             //assert
             Assert.Equal(2500, employee.Salary);
@@ -27,10 +33,9 @@ namespace EmployeeManagement.Test
         public void CreateEmployee_ConstructInternalEmployee_SalaryMustBeBetween2500And3500()
         {
             //arrange
-            var employeeFactory = new EmployeeFactory();
 
             //act
-            var employee = (InternalEmployee)employeeFactory.CreateEmployee("John", "Doe");
+            var employee = (InternalEmployee)_employeeFactory.CreateEmployee("John", "Doe");
 
             //assert
             //Assert.True(employee.Salary >= 2500 && employee.Salary <= 3500,
@@ -43,10 +48,9 @@ namespace EmployeeManagement.Test
         public void CreateEmployee_ConstructInternalEmployee_SalaryMustBe2500_PrecisionExample()
         {
             //arrange
-            var employeeFactory = new EmployeeFactory();
 
             //act
-            var employee = (InternalEmployee)employeeFactory.CreateEmployee("John", "Doe");
+            var employee = (InternalEmployee)_employeeFactory.CreateEmployee("John", "Doe");
             employee.Salary = 2500.1234m; // setting a value with more precision
 
             //asert
